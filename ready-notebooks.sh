@@ -5,6 +5,10 @@ set -x
 
 mkdir -p upload
 
+ME=$(readlink -f "$0")
+DIR=$(dirname "$ME")
+MYDIR=$(cd "$DIR" && pwd)
+
 for nb in [0-9]*/*ipynb; do
   echo "PROCESSING $nb"
   DIR="$(dirname "$nb")"
@@ -15,7 +19,7 @@ for nb in [0-9]*/*ipynb; do
   CONV_PY="${CONV_BASE}.py"
   CONV_HTML="${CONV_BASE}.html"
 
-  ./demo-ready-ipynb --keep "$nb" "${CONV_BASE}.ipynb"
+  "$MYDIR/demo-ready-ipynb" --keep "$nb" "${CONV_BASE}.ipynb"
   if test "$nb" -nt "$CONV_PY"; then
     ipython nbconvert "$nb" --to=python "--output=${CONV_BASE}"
   fi
@@ -26,5 +30,5 @@ for nb in [0-9]*/*ipynb; do
   CONV_DIR="cleared/$DIR"
   mkdir -p "$CONV_DIR"
   CONV_IPYNB="cleared/$nb"
-  ./demo-ready-ipynb "$nb" "$CONV_IPYNB"
+  "$MYDIR/demo-ready-ipynb" "$nb" "$CONV_IPYNB"
 done
