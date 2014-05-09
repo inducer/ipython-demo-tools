@@ -35,7 +35,7 @@ for ws in ipynb["worksheets"]:
                 inputs = cell["input"]
 
             for input_line in inputs:
-                if input_line.startswith("#keep"):
+                if "#keep" in input_line:
                     do_keep = True
                 else:
                     new_inputs.append(input_line)
