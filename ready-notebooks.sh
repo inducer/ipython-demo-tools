@@ -22,10 +22,10 @@ for nb in [0-9]*/**/*ipynb; do
 
   PROCESSED_IPYNB="${CONV_BASE}.ipynb"
   "$MYDIR/demo-ready-ipynb" --keep "$nb" "$PROCESSED_IPYNB"
-  if test "$nb" -nt "$CONV_PY"; then
+  if ! test -f "$CONV_PY" || test "$nb" -nt "$CONV_PY"; then
     ipython nbconvert "$PROCESSED_IPYNB" --to=python "--output=${CONV_BASE}"
   fi
-  if test "$nb" -nt "$CONV_HTML"; then
+  if ! test -f "$CONV_HTML" || test "$nb" -nt "$CONV_HTML"; then
     ipython nbconvert "$PROCESSED_IPYNB" --to=html "--output=${CONV_BASE}"
   fi
 
