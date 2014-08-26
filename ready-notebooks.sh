@@ -1,7 +1,8 @@
-#! /bin/bash
+#! /bin/zsh
 
 set -e
 set -x
+setopt -o EXTENDED_GLOB
 
 mkdir -p upload
 
@@ -9,7 +10,7 @@ ME=$(readlink -f "$0")
 DIR=$(dirname "$ME")
 MYDIR=$(cd "$DIR" && pwd)
 
-for nb in [0-9]*/*ipynb; do
+for nb in [0-9]*/**/*ipynb; do
   echo "PROCESSING $nb"
   DIR="$(dirname "$nb")"
 
