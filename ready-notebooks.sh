@@ -34,7 +34,14 @@ for nb in [0-9]*/**/*ipynb; do
   CONV_IPYNB="cleared/$nb"
   "$MYDIR/demo-ready-ipynb" "$nb" "$CONV_IPYNB"
 done
+function mkdir_and_cp()
+{
+  dn=$(dirname "$2")
+  mkdir -p "$dn"
+  cp "$1" "$2"
+
+}
 for i in [0-9]*/**/*~*ipynb~*.pyc~*\~(#q.); do
-  cp $i cleared/$i
-  cp $i upload/$i
+  mkdir_and_cp $i cleared/$i
+  mkdir_and_cp $i upload/$i
 done
