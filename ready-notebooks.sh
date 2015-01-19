@@ -41,7 +41,7 @@ function mkdir_and_cp()
   cp "$1" "$2"
 
 }
-for i in [0-9]*/**/*~*ipynb~*.pyc~*\~(#q.); do
+for i in [0-9]*/**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
   mkdir_and_cp $i cleared/$i
   mkdir_and_cp $i upload/$i
 done
