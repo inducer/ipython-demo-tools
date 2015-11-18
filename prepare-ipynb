@@ -1,0 +1,120 @@
+#! /usr/bin/env python3
+
+from json import load, dump
+
+def _get_inputs(cell):
+    inputs = None
+    if inputs is None and "inputs" in cell:
+        result = cell["inputs"]
+        if "inputs" in cell:
+            del cell["inputs"]
+
+        return result
+    if inputs is None and "input" in cell:
+        return cell["input"]
+
+    raise ValueError("no inputs found")
+
+
+def convert_from_keep(cell):
+    inputs = _get_inputs(cell)
+
+    new_inputs = []
+    has_keep = False
+    for input_line in inputs:
+        if "#keep" in input_line:
+            has_keep = True
+        else:
+            new_inputs.append(input_line)
+    if not has_keep:
+        new_inputs = ["#clear"] + new_inputs
+
+    cell["input"] = new_inputs
+
+
+def remove_marks(cell):
+    inputs = _get_inputs(cell)
+
+    new_inputs = []
+    for input_line in inputs:
+        if "#clear" not in input_line:
+            new_inputs.append(input_line)
+
+    cell["input"] = new_inputs
+
+
+def clear_output(cell):
+    cell["outputs"] = []
+    cell.pop("prompt_number", None)
+
+
+def clear_marked_inputs(cell):
+    inputs = _get_inputs(cell)
+
+    has_clear = False
+    new_inputs = []
+    for input_line in inputs:
+        if "#clear" not in input_line:
+            new_inputs.append(input_line)
+        else:
+            has_clear = True
+            break
+
+    if has_clear:
+        new_inputs = []
+    cell["input"] = new_inputs
+
+
+OP_FUNCS = {
+        "convert-from-keep": convert_from_keep,
+        "remove-marks": remove_marks,
+        "clear-output": clear_output,
+        "clear-marked-inputs": clear_marked_inputs,
+        }
+
+def main():
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+
+    parser.add_argument("operations",
+            choices=tuple(OP_FUNCS.keys()),
+            nargs="+")
+    parser.add_argument("infile", metavar="INFILE.ipynb")
+    parser.add_argument("outfile", metavar="OUTFILE.ipynb")
+
+    args = parser.parse_args()
+
+    with open(args.infile, "rt") as inf:
+        ipynb = load(inf)
+
+    for ws in ipynb["worksheets"]:
+        for cell in ws["cells"]:
+            if cell["cell_type"] == "code":
+
+                for op in arg.operations:
+                    op_func = OP_FUNCS[op]
+                    op_func(cell)
+
+                do_keep = False
+                new_inputs = []
+
+                for input_line in inputs:
+                    if "#keep" in input_line:
+                        do_keep = True
+                    else:
+                        new_inputs.append(input_line)
+
+                if args.keep:
+                    cell["input"] = new_inputs
+                else:
+                    if do_keep:
+                        cell["input"] = new_inputs
+                    else:
+                        cell["input"] = []
+
+    with open(args.outfile, "wt") as outf:
+        dump(ipynb, outf)
+
+if __name__ == "__main__":
+    main()
