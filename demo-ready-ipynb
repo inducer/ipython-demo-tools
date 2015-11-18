@@ -2,24 +2,26 @@
 
 from json import load, dump
 
-import sys
+from argparse import ArgumentParser
 
-from optparse import OptionParser
+from warnings import warn
+warn(
+    "This program is deprecated and only kept for compatibility. "
+    "You should use the newer prepare-ipynb instead "
+    "(and convert your existing notebooks to it).",
+    DeprecationWarning)
 
-parser = OptionParser(
-    usage="%prog [options] INFILE OUTFILE")
+parser = ArgumentParser()
 
-parser.add_option(
+parser.add_argument(
     "-k", "--keep", action="store_true",
     help="Keep everything, just delete '# keep' comments")
+parser.add_argument("infile", metavar="INFILE.ipynb")
+parser.add_argument("outfile", metavar="OUTFILE.ipynb")
 
-options, args = parser.parse_args()
+args = parser.parse_args()
 
-if len(args) != 2:
-    parser.print_usage()
-    sys.exit(1)
-
-with open(args[0], "rt") as inf:
+with open(args.infile, "rt") as inf:
     ipynb = load(inf)
 
 for ws in ipynb["worksheets"]:
@@ -42,7 +44,7 @@ for ws in ipynb["worksheets"]:
 
             if "inputs" in cell:
                 del cell["inputs"]
-            if options.keep:
+            if args.keep:
                 cell["input"] = new_inputs
             else:
                 if do_keep:
@@ -54,5 +56,5 @@ for ws in ipynb["worksheets"]:
                 cell.pop("prompt_number", None)
 
 
-with open(args[1], "wt") as outf:
+with open(args.outfile, "wt") as outf:
     dump(ipynb, outf)
