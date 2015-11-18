@@ -2,6 +2,7 @@
 
 from json import load, dump
 
+
 def _get_inputs(cell):
     inputs = None
     if inputs is None and "inputs" in cell:
@@ -26,7 +27,7 @@ def convert_from_keep(cell):
             has_keep = True
         else:
             new_inputs.append(input_line)
-    if not has_keep:
+    if not has_keep and new_inputs:
         new_inputs = ["#clear"] + new_inputs
 
     cell["input"] = new_inputs
@@ -72,12 +73,14 @@ OP_FUNCS = {
         "clear-marked-inputs": clear_marked_inputs,
         }
 
+
 def main():
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
 
-    parser.add_argument("operations",
+    parser.add_argument(
+            "operations",
             choices=tuple(OP_FUNCS.keys()),
             nargs="+")
     parser.add_argument("infile", metavar="INFILE.ipynb")
@@ -92,29 +95,12 @@ def main():
         for cell in ws["cells"]:
             if cell["cell_type"] == "code":
 
-                for op in arg.operations:
+                for op in args.operations:
                     op_func = OP_FUNCS[op]
                     op_func(cell)
 
-                do_keep = False
-                new_inputs = []
-
-                for input_line in inputs:
-                    if "#keep" in input_line:
-                        do_keep = True
-                    else:
-                        new_inputs.append(input_line)
-
-                if args.keep:
-                    cell["input"] = new_inputs
-                else:
-                    if do_keep:
-                        cell["input"] = new_inputs
-                    else:
-                        cell["input"] = []
-
     with open(args.outfile, "wt") as outf:
-        dump(ipynb, outf)
+        dump(ipynb, outf, indent=2, sort_keys=True)
 
 if __name__ == "__main__":
     main()
