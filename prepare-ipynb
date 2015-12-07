@@ -3,22 +3,35 @@
 from json import load, dump
 
 
-def _get_inputs(cell):
-    inputs = None
-    if inputs is None and "inputs" in cell:
-        result = cell["inputs"]
+class _SourceReplacer:
+    def __init__(self, cell):
+        self.cell = cell
+
+    def get(self):
+        cell = self.cell
         if "inputs" in cell:
-            del cell["inputs"]
+            self.attr = "input"
+            return cell["inputs"]
+        if "input" in cell:
+            self.attr = "input"
+            return cell["input"]
+        if "source" in cell:
+            self.attr = "source"
+            return cell["source"]
 
-        return result
-    if inputs is None and "input" in cell:
-        return cell["input"]
+        print(cell)
+        raise ValueError("no inputs found")
 
-    raise ValueError("no inputs found")
+    def set(self, inputs):
+        if self.attr == "input" and "inputs" in self.cell:
+            del self.cell["inputs"]
+
+        self.cell[self.attr] = inputs
 
 
 def convert_from_keep(cell):
-    inputs = _get_inputs(cell)
+    sr = _SourceReplacer(cell)
+    inputs = sr.get()
 
     new_inputs = []
     has_keep = False
@@ -30,18 +43,19 @@ def convert_from_keep(cell):
     if not has_keep and new_inputs:
         new_inputs = ["#clear"] + new_inputs
 
-    cell["input"] = new_inputs
+    sr.set(new_inputs)
 
 
 def remove_marks(cell):
-    inputs = _get_inputs(cell)
+    sr = _SourceReplacer(cell)
+    inputs = sr.get()
 
     new_inputs = []
     for input_line in inputs:
         if "#clear" not in input_line:
             new_inputs.append(input_line)
 
-    cell["input"] = new_inputs
+    sr.set(new_inputs)
 
 
 def clear_output(cell):
@@ -50,7 +64,8 @@ def clear_output(cell):
 
 
 def clear_marked_inputs(cell):
-    inputs = _get_inputs(cell)
+    sr = _SourceReplacer(cell)
+    inputs = sr.get()
 
     has_clear = False
     new_inputs = []
@@ -63,7 +78,8 @@ def clear_marked_inputs(cell):
 
     if has_clear:
         new_inputs = []
-    cell["input"] = new_inputs
+
+    sr.set(new_inputs)
 
 
 OP_FUNCS = {
@@ -91,10 +107,17 @@ def main():
     with open(args.infile, "rt") as inf:
         ipynb = load(inf)
 
-    for ws in ipynb["worksheets"]:
-        for cell in ws["cells"]:
-            if cell["cell_type"] == "code":
+    def iterate_cells(ipynb):
+        if "worksheets" in ipynb:
+            for ws in ipynb["worksheets"]:
+                for cell in ws["cells"]:
+                    yield cell
+        else:
+            for cell in ipynb["cells"]:
+                yield cell
 
+    for cell in iterate_cells(ipynb):
+        if cell["cell_type"] == "code":
                 for op in args.operations:
                     op_func = OP_FUNCS[op]
                     op_func(cell)

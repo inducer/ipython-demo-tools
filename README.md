@@ -14,3 +14,5 @@ In particular, you can:
 * `remove-marks`: Removes `#clear` marks to produce material suitable for
   distribution to students.
 
+**Note:** Despite the name, the current version also supports Jupyter (v4)
+notebooks.
