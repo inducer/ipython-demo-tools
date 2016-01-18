@@ -41,7 +41,7 @@ def convert_from_keep(cell):
         else:
             new_inputs.append(input_line)
     if not has_keep and new_inputs:
-        new_inputs = ["#clear"] + new_inputs
+        new_inputs = ["#clear\n"] + new_inputs
 
     sr.set(new_inputs)
 
