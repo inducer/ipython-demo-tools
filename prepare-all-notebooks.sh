@@ -4,6 +4,8 @@ set -e
 set -x
 setopt -o EXTENDED_GLOB
 
+unset PYTHONWARNINGS
+
 mkdir -p upload
 
 ME=$(readlink -f "$0")
@@ -23,10 +25,10 @@ for nb in [0-9]*/**/*ipynb; do
   PROCESSED_IPYNB="${CONV_BASE}.ipynb"
   "$MYDIR/prepare-ipynb" remove-marks "$nb" "$PROCESSED_IPYNB"
   if ! test -f "$CONV_PY" || test "$nb" -nt "$CONV_PY"; then
-    python $(which jupyter-nbconvert) "$PROCESSED_IPYNB" --to=python "--output=${CONV_BASE}"
+    python -m nbconvert "$PROCESSED_IPYNB" --to=python
   fi
   if ! test -f "$CONV_HTML" || test "$nb" -nt "$CONV_HTML"; then
-    python $(which jupyter-nbconvert) "$PROCESSED_IPYNB" --to=html "--output=${CONV_BASE}"
+    python -m nbconvert "$PROCESSED_IPYNB" --to=html
   fi
 
   CONV_DIR="cleared/$DIR"
