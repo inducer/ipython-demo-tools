@@ -1,8 +1,13 @@
 #! /bin/zsh
 
 set -e
-set -x
 setopt -o EXTENDED_GLOB
+
+function with_echo()
+{
+  echo "$@"
+  "$@"
+}
 
 unset PYTHONWARNINGS
 
@@ -13,7 +18,6 @@ DIR=$(dirname "$ME")
 MYDIR=$(cd "$DIR" && pwd)
 
 for nb in [0-9]*/**/*ipynb; do
-  echo "PROCESSING $nb"
   DIR="$(dirname "$nb")"
 
   CONV_DIR="upload/$DIR"
@@ -23,27 +27,26 @@ for nb in [0-9]*/**/*ipynb; do
   CONV_HTML="${CONV_BASE}.html"
 
   PROCESSED_IPYNB="${CONV_BASE}.ipynb"
-  "$MYDIR/prepare-ipynb" remove-marks "$nb" "$PROCESSED_IPYNB"
+  with_echo "$MYDIR/prepare-ipynb" remove-marks "$nb" "$PROCESSED_IPYNB"
   if ! test -f "$CONV_PY" || test "$nb" -nt "$CONV_PY"; then
-    python -m nbconvert "$PROCESSED_IPYNB" --to=python
+    with_echo python -m nbconvert "$PROCESSED_IPYNB" --to=python
   fi
   if ! test -f "$CONV_HTML" || test "$nb" -nt "$CONV_HTML"; then
-    python -m nbconvert "$PROCESSED_IPYNB" --to=html
+    with_echo python -m nbconvert "$PROCESSED_IPYNB" --to=html
   fi
 
   CONV_DIR="cleared/$DIR"
   mkdir -p "$CONV_DIR"
   CONV_IPYNB="cleared/$nb"
-  "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
+  with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
 done
 function mkdir_and_cp()
 {
   dn=$(dirname "$2")
   mkdir -p "$dn"
-  cp "$1" "$2"
-
+  with_echo cp "$1" "$2"
 }
 for i in [0-9]*/**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
-  mkdir_and_cp $i cleared/$i
-  mkdir_and_cp $i upload/$i
+  with_echo mkdir_and_cp $i cleared/$i
+  with_echo mkdir_and_cp $i upload/$i
 done
