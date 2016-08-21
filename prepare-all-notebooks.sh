@@ -17,7 +17,13 @@ ME=$(readlink -f "$0")
 DIR=$(dirname "$ME")
 MYDIR=$(cd "$DIR" && pwd)
 
-for nb in [0-9]*/**/*ipynb; do
+for nb in */**/*.ipynb; do
+  if [[ $nb == upload* ]]; then
+    continue
+  fi
+  if [[ $nb == cleared* ]]; then
+    continue
+  fi
   DIR="$(dirname "$nb")"
 
   CONV_DIR="upload/$DIR"
