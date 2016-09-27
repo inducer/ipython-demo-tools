@@ -52,7 +52,13 @@ function mkdir_and_cp()
   mkdir -p "$dn"
   with_echo cp "$1" "$2"
 }
-for i in [0-9]*/**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
+for i in */**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
+  if [[ $i == upload* ]]; then
+    continue
+  fi
+  if [[ $i == cleared* ]]; then
+    continue
+  fi
   with_echo mkdir_and_cp $i cleared/$i
   with_echo mkdir_and_cp $i upload/$i
 done
