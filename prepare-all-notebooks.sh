@@ -33,7 +33,9 @@ for nb in */**/*.ipynb; do
   CONV_HTML="${CONV_BASE}.html"
 
   PROCESSED_IPYNB="${CONV_BASE}.ipynb"
-  with_echo "$MYDIR/prepare-ipynb" remove-marks "$nb" "$PROCESSED_IPYNB"
+  if ! test -f "$PROCESSED_IPYNB" || test "$nb" -nt "$PROCESSED_IPYNB"; then
+    with_echo "$MYDIR/prepare-ipynb" remove-marks "$nb" "$PROCESSED_IPYNB"
+  fi
   if ! test -f "$CONV_PY" || test "$nb" -nt "$CONV_PY"; then
     with_echo python -m nbconvert "$PROCESSED_IPYNB" --to=python
   fi
@@ -44,7 +46,9 @@ for nb in */**/*.ipynb; do
   CONV_DIR="cleared/$DIR"
   mkdir -p "$CONV_DIR"
   CONV_IPYNB="cleared/$nb"
-  with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
+  if ! test -f "$CONV_IPYNB" || test "$nb" -nt "$CONV_IPYNB"; then
+    with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
+  fi
 done
 function mkdir_and_cp()
 {
