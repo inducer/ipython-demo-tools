@@ -104,7 +104,7 @@ def main():
 
     args = parser.parse_args()
 
-    with open(args.infile, "rt") as inf:
+    with open(args.infile, "rt", encoding="utf-8") as inf:
         ipynb = load(inf)
 
     def iterate_cells(ipynb):
