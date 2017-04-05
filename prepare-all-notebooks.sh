@@ -60,6 +60,9 @@ for i in */**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
   if [[ $i == upload* ]]; then
     continue
   fi
+  if [[ $i == ipython-demo-tools* ]]; then
+    continue
+  fi
   if [[ $i == cleared* ]]; then
     continue
   fi
