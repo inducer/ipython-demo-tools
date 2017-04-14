@@ -46,9 +46,7 @@ for nb in */**/*.ipynb; do
   CONV_DIR="cleared/$DIR"
   mkdir -p "$CONV_DIR"
   CONV_IPYNB="cleared/$nb"
-  if ! test -f "$CONV_IPYNB" || test "$nb" -nt "$CONV_IPYNB"; then
-    with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
-  fi
+  with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
 done
 function mkdir_and_cp()
 {
