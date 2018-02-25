@@ -1,7 +1,7 @@
-# IPython demo tools
+# Jupyter notebook demo tools
 
 `prepare-ipynb` is a small tool that allows you to automate modifications to
-IPython that make them suitable for in-class demos.
+Jupyter notebooks that make them suitable for in-class demos.
 
 In particular, you can:
 
