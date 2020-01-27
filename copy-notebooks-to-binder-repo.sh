@@ -36,6 +36,10 @@ for nb in */**/*.ipynb; do
   fi
   DIR="$(dirname "$nb")"
 
+  if test -f "$DIR/.do-not-publish"; then
+    continue
+  fi
+
   CONV_DIR="$REPODIR/$DIR"
   mkdir -p "$CONV_DIR"
   CONV_BASE="upload/${nb%.ipynb}"
@@ -52,6 +56,11 @@ function mkdir_and_cp()
   with_echo cp "$1" "$2"
 }
 for i in */**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
+  DIR="$(dirname "$i")"
+  if test -f "$DIR/.do-not-publish"; then
+    continue
+  fi
+
   if [[ $i == upload* ]]; then
     continue
   fi

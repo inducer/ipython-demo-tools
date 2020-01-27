@@ -24,7 +24,11 @@ for nb in */**/*.ipynb; do
   if [[ $nb == cleared* ]]; then
     continue
   fi
+
   DIR="$(dirname "$nb")"
+  if test -f "$DIR/.hide-notebooks"; then
+    continue
+  fi
 
   CONV_DIR="upload/$DIR"
   mkdir -p "$CONV_DIR"
@@ -55,6 +59,11 @@ function mkdir_and_cp()
   with_echo cp "$1" "$2"
 }
 for i in */**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
+  DIR="$(dirname "$i")"
+  if test -f "$DIR/.do-not-publish"; then
+    continue
+  fi
+
   if [[ $i == upload* ]]; then
     continue
   fi
