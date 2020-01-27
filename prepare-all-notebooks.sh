@@ -26,7 +26,7 @@ for nb in */**/*.ipynb; do
   fi
 
   DIR="$(dirname "$nb")"
-  if test -f "$DIR/.hide-notebooks"; then
+  if test -f "$DIR/.do-not-publish"; then
     continue
   fi
 
