@@ -74,7 +74,7 @@ for nb in $INPUTDIR/*/**/*.ipynb; do
   with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
 done
 
-for i in $INPUTDIR/*/**/*~*ipynb~*.pyc~*\~(#q.)(#qN); do
+for i in $INPUTDIR/*/**/*~*ipynb~*.log~*.pyc~*\~(#q.)(#qN); do
   DIR="$(dirname "$i")"
   RELNAME="$(realpath --relative-to="$INPUTDIR" "$i")"
   if test -f "$DIR/.do-not-publish"; then
