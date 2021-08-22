@@ -68,7 +68,7 @@ for nb in $INPUTDIR/*/**/*.ipynb; do
     with_echo python -m nbconvert "$PROCESSED_IPYNB" --to=html
   fi
 
-  CONV_DIR="$OUTPUTDIR/upload/$RELDIR"
+  CONV_DIR="$OUTPUTDIR/cleared/$RELDIR"
   mkdir -p "$CONV_DIR"
   CONV_IPYNB="$CONV_DIR/$BN"
   with_echo "$MYDIR/prepare-ipynb" clear-output clear-marked-inputs "$nb" "$CONV_IPYNB"
