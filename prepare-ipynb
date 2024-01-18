@@ -124,7 +124,7 @@ def clear_and_collapse_marked_inputs(cell):
         old_cell_jupy["source_hidden"] = True
 
         old_sr = _SourceReplacer(old_cell)
-        old_sr.set(["# uncollapse this cell for solution\n"] + old_sr.get())
+        old_sr.set(["# expand this cell for solution\n"] + old_sr.get())
 
         return [cell, old_cell]
     else:
