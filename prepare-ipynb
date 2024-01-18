@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from copy import deepcopy
-from json import load, dump
+from json import dump, load
 
 
 class _SourceReplacer:
@@ -49,8 +49,8 @@ class _CellsReplacer:
         else:
             cells, = clists
             self.ipynb["cells"] = cells
-        
-        
+
+
 def remove_marks(cell):
     if cell["cell_type"] != "code":
         return [cell]
@@ -93,7 +93,6 @@ def process_input_lines(inputs):
 
     return new_inputs, has_clear
 
-    
 def clear_marked_inputs(cell):
     if cell["cell_type"] != "code":
         return [cell]
@@ -130,7 +129,7 @@ def clear_and_collapse_marked_inputs(cell):
         return [cell, old_cell]
     else:
         return [cell]
- 
+
 
 OP_FUNCS = {
         "remove-marks": remove_marks,
@@ -159,7 +158,7 @@ def main():
 
     cr = _CellsReplacer(ipynb)
     new_clists = []
-    
+
     for clist in cr.get_cell_lists():
         new_cells = []
 
