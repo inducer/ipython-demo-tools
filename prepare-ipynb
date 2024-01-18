@@ -60,7 +60,9 @@ def remove_marks(cell):
 
     new_inputs = []
     for input_line in inputs:
-        if "#clear" not in input_line:
+        if ("#clear" not in input_line
+                and "#beginclear" not in input_line
+                and "#endclear" not in input_line):
             new_inputs.append(input_line)
 
     sr.set(new_inputs)
@@ -79,19 +81,26 @@ def clear_output(cell):
 
 
 def process_input_lines(inputs):
-    has_clear = False
+    made_changes = False
+    clearing = False
     new_inputs = []
     for input_line in inputs:
-        if "#clear" not in input_line:
+        if "#clear" in input_line:
+            return [], True
+        elif "#beginclear" in input_line:
+            clearing = True
+            made_changes = True
+            new_inputs.append(input_line.replace("#beginclear", "..."))
+        elif "#endclear" in input_line:
+            clearing = False
+        elif not clearing:
             new_inputs.append(input_line)
-        else:
-            has_clear = True
-            break
 
-    if has_clear:
-        new_inputs = []
+    if clearing:
+        raise ValueError("unterminated #beginclear")
 
-    return new_inputs, has_clear
+    return new_inputs, made_changes
+
 
 def clear_marked_inputs(cell):
     if cell["cell_type"] != "code":
