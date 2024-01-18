@@ -97,7 +97,8 @@ def process_input_lines(inputs):
             new_inputs.append(input_line)
 
     if clearing:
-        raise ValueError("unterminated #beginclear")
+        contents = "".join(inputs)
+        raise ValueError(f"unterminated #beginclear in cell with '{contents}'")
 
     return new_inputs, made_changes
 
